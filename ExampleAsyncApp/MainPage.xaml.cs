@@ -1,30 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace ExampleAsyncApp
-{
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+{    
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
         private bool _isRunning;
@@ -41,7 +25,6 @@ namespace ExampleAsyncApp
 
         public bool IsButtonEnabled => !IsRunning;
 
-
         private DispatcherTimer _counterTimer = new DispatcherTimer();
         private uint _frameCount = 0;
         public MainPage()
@@ -55,16 +38,16 @@ namespace ExampleAsyncApp
             };
             _counterTimer.Start();
         }
-        
+
         //-----Simple blocking example
 
         private void BlockingButton_Click(object sender, RoutedEventArgs e)
         {
-            IsRunning = true;            
-           
-            string result = SimulatedSlowHardDriveAccess();
+            IsRunning = true;
+
+            string result = AccessHardDrive();
             ResultBlock.Text = result;
-            
+
             IsRunning = false;
         }
 
@@ -78,8 +61,9 @@ namespace ExampleAsyncApp
             IsRunning = true;
 
             Thread backgroundThread = new Thread(
-                () => {
-                    string result = SimulatedSlowHardDriveAccess();
+                () =>
+                {
+                    string result = AccessHardDrive();
 
                     // These operations affect the UI, and therefore, must take place on the UI thread.
                     var dummyVariable = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -91,7 +75,21 @@ namespace ExampleAsyncApp
 
             backgroundThread.Start();
         }
-        
+
+        //-----
+
+        //-----Correct Async/Await example
+
+        private async void AsyncAwaitButton_Click(object sender, RoutedEventArgs e)
+        {
+            IsRunning = true;
+
+            string result = await AccessHardDriveAsync();
+            ResultBlock.Text = result;
+
+            IsRunning = false;
+        }
+
         //-----
 
         //------Deadlock example
@@ -112,20 +110,6 @@ namespace ExampleAsyncApp
         }
 
         //------
-
-        //-----Correct Async/Await example
-
-        private async void AsyncAwaitButton_Click(object sender, RoutedEventArgs e)
-        {
-            IsRunning = true;
-
-            string result = await AccessHardDriveAsync();
-            ResultBlock.Text = result;
-
-            IsRunning = false;
-        }
-        
-        //-----
 
         //-----Remarshaled Call example
 
@@ -173,11 +157,11 @@ namespace ExampleAsyncApp
 
         private async Task<string> AccessHardDriveAsync()
         {
-            var result = await Task.Run(() => SimulatedSlowHardDriveAccess());
+            var result = await Task.Run(() => AccessHardDrive());
             return result;
         }
 
-        private string SimulatedSlowHardDriveAccess()
+        private string AccessHardDrive()
         {
             Thread.Sleep(2500);
             return $"Hard drive says: {Guid.NewGuid()}";

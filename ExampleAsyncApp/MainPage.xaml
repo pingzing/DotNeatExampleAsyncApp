@@ -55,19 +55,19 @@
 
         <Button x:Name="ConstantlyMarshaledButton"
                 RelativePanel.RightOf="Progress" RelativePanel.Below="ResultBlock"
-                Content="Remarshaled Call" Click="RemarshaledCall"
+                Content="ConfigureAwait(true) i.e. the default" Click="RemarshaledCall"
                 IsEnabled="{x:Bind IsButtonEnabled, Mode=OneWay}"
                 Style="{ThemeResource ButtonRevealStyle}"/>
         <Button x:Name="UnmarshaledButton"
                 RelativePanel.RightOf="Progress" RelativePanel.Below="ConstantlyMarshaledButton"
-                Content="Unmarshaled Call" Click="UnmarshaledButton_Click"
+                Content="ConfigureAwait(false)" Click="UnmarshaledButton_Click"
                 IsEnabled="{x:Bind IsButtonEnabled, Mode=OneWay}"
                 Style="{ThemeResource ButtonRevealStyle}"/>
         
         <Button x:Name="BackgroundThreadButton"
                 RelativePanel.RightOf="Progress"
                 RelativePanel.Below="UnmarshaledButton"
-                Content="Background Threaded Call" Click="BackgroundThreadButton_Click"
+                Content="Explicitly created thread" Click="BackgroundThreadButton_Click"
                 IsEnabled="{x:Bind IsButtonEnabled, Mode=OneWay}"
                 Margin="0 10 0 0"
                 Style="{ThemeResource ButtonRevealStyle}"/>
